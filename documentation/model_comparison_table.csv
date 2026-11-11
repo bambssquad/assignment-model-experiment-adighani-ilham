@@ -1,1 +1,7 @@
 Evaluasi,Pendekatan,Accuracy,Precision (macro),Recall (macro),F1 (macro)
+"Split A (starter, n=40, bocor)",Klasik TF-IDF+LogReg,1.0,1.0,1.0,1.0
+"Split A (starter, n=40, bocor)",Gemini zero-shot,1.0,1.0,1.0,1.0
+"Split B (UTAMA, n=35 baris / 8 teks)",Klasik TF-IDF+LogReg,0.857,0.904,0.821,0.838
+"Split B (UTAMA, n=35 baris / 8 teks)",Gemini zero-shot,1.0,1.0,1.0,1.0
+Suplemen LOO (n=40 teks unik),Klasik TF-IDF+LogReg,0.7,0.7,0.7,0.7
+Suplemen LOO (n=40 teks unik),Gemini zero-shot,1.0,1.0,1.0,1.0
