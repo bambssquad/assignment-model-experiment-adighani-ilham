@@ -1,0 +1,40 @@
+name: build-artifacts
+
+# Satu kali jalan: ambil dataset (Google Sheets dari brief), jalankan notebook memakai
+# cache prediksi Gemini (tanpa panggilan API), lalu commit notebook ber-output + gambar + tabel.
+on:
+  push:
+    paths:
+      - ".github/workflows/build-artifacts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependency
+        run: pip install -r requirements.txt
+      - name: Ambil dataset dari Google Sheets (sesuai brief)
+        run: |
+          curl -sSL -o data/customer_reviews_sentiment.csv "https://docs.google.com/spreadsheets/d/1ry3h8o_MxeKR0bDolcZ8Au9giMgZl7Q0cyfjdhj1XLE/export?format=csv"
+          test "$(wc -l < data/customer_reviews_sentiment.csv)" -ge 200
+          head -2 data/customer_reviews_sentiment.csv
+      - name: Jalankan notebook (pakai cache prediksi Gemini)
+        working-directory: notebook
+        env:
+          GEMINI_API_KEY: "not-used-cache-available"
+        run: jupyter nbconvert --to notebook --execute --inplace experiment_notebook.ipynb
+      - name: Commit hasil
+        run: |
+          git config user.name "bambssquad"
+          git config user.email "137799776+bambssquad@users.noreply.github.com"
+          git add data documentation notebook
+          git commit -m "Add dataset, executed notebook, and comparison summary" || echo "nothing to commit"
+          git push
